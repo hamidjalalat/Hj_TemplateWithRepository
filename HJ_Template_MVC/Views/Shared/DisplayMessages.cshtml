@@ -1,0 +1,53 @@
+﻿@{
+    List<Infrastructure.PageMessages> oPageMessages =
+        ViewBag.Messages as List<Infrastructure.PageMessages>;
+
+    if (oPageMessages.Count == 0 || oPageMessages == null)
+    {
+        return;
+    }
+
+    var varErrorMessage =
+        oPageMessages
+        .Where(current => current.Type == Infrastructure.PageMessages.Types.Error)
+        .ToList()
+        ;
+    var varInfoMessage =
+    oPageMessages
+    .Where(current => current.Type == Infrastructure.PageMessages.Types.Info)
+    .ToList()
+    ;
+
+
+    if (varErrorMessage.Count != 0)
+    {
+
+    }
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 bg-danger">
+                <ul>
+                    @foreach (var varMessage in varErrorMessage)
+                    {
+                        <li>
+                            @varMessage.Message
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 bg-info">
+                <ul>
+                    @foreach (var varMessage in varInfoMessage)
+                    {
+                        <li>
+                            @varMessage.Message
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+}

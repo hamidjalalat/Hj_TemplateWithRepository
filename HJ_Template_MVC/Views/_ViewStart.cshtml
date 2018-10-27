@@ -1,0 +1,23 @@
+﻿@{
+    string strCurrentCultureName =
+        System.Threading.Thread.CurrentThread.CurrentCulture.Name.ToUpper().Substring(0, 2);
+
+    switch (strCurrentCultureName)
+    {
+        case "FA":
+        case "AR":
+            {
+                Layout = "~/Views/Shared/_Layout_fa-IR.cshtml";
+
+                break;
+            }
+
+        default:
+            {
+                Layout = "~/Views/Shared/_Layout.cshtml";
+
+                break;
+            }
+    }
+
+}

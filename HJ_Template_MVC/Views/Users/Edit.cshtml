@@ -1,0 +1,33 @@
+﻿@model ViewModels.Users.EditViewModel
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>User</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(model => model.Id)
+
+        @Html.HjEditor(model => model.Name)
+
+        @Html.HjEditor(model => model.Password)
+
+        @Html.HjEditor(model => model.ConfirmPassword)
+
+        @Html.HjSubmit("btnsubmit", Resources.General.Save, "btn btn-primary ")
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

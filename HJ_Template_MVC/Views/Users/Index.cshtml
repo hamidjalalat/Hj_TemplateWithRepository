@@ -1,0 +1,176 @@
+﻿@model IEnumerable<Models.User>
+
+@{
+    ViewBag.Title = "Index";
+}
+@{
+
+    AjaxOptions ajaxOption = new AjaxOptions
+    {
+        HttpMethod = "Post",
+        Confirm = "آیا از حذف این رکورد اطمینان دارید؟",
+        UpdateTargetId = "deleteResult",
+        OnSuccess = "onAjaxDeleteSuccess",
+        OnFailure = "onAjaxDeleteFailed",
+        LoadingElementId = "loadingDIV",
+        LoadingElementDuration = 500
+    };
+}
+<h2>Index</h2>
+<div class="row">
+    <div class="col-sm-12 bg-info">
+        <div id="deleteResult"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 links">
+        <button class="btn btn-primary" id="btnOpenCreateDialog">Create</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 table-responsive">
+        <table id="data" class="table table-bordered table-condensed table-striped table-hover">
+            <tr id="firsttr">
+
+                <th>
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+           
+                <th>
+                    @Html.DisplayNameFor(model => model.DataCreate)
+                </th>
+
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr id="@item.Id">
+                    <td>
+                        @Html.ActionLink("Edit", MVC.Users.Edit(item.Id)) |
+                        @Html.ActionLink("Details", MVC.Users.Details(item.Id)) |
+                        @*@Html.ActionLink("Delete", MVC.Users.Delete(item.Id))|*@
+                        @Ajax.ActionLink("Delete", "DeleteAJAX", new { Controller = "Users", Id = item.Id }, ajaxOption)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                 
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataCreate)
+                    </td>
+                </tr>
+            }
+            @*@Html.Partial(partialViewName: "~/Views/Shared/DisplayMessages.cshtml")*@
+
+
+            <div id="loadingDIV" style="">
+                در حال بارگذاری...
+                <img src="~/Content/loading.gif" />
+            </div>
+        </table>
+    </div>
+</div>
+@{
+    ViewModels.Users.CreateViewModel CreateViewModel = new ViewModels.Users.CreateViewModel();
+}
+@Html.Partial("_Partial_GeneralDialog", CreateViewModel)
+@section Scripts
+{
+
+    <script src=@Links.scripts.jquery_unobtrusive_ajax_min_js></script>
+    <script>
+        
+        $(document).ready(function () {
+   
+            $.validator.unobtrusive.parse("form#frmMain");
+            $('button#btnOpenCreateDialog').click(function () {
+
+                $('div#createDialog').modal({ backdrop: false, keyboard: true, });
+
+            });
+
+            $('button#btnCreate').click(function () {
+               
+                $('#btnCreate').hide();
+                $('div#message').html('');
+
+                $('#loadingDIV').show();
+
+                var varData =
+                    $('form#frmMain').serialize();
+
+                $.ajax({
+
+                    type: 'POST',
+
+                    dataType: 'json',
+
+                    data: varData,
+
+                    url: '/Users/CreateAjax',
+
+                    error: function (response) {
+
+                        $('div#message').html('Error on sending or receiving data!');
+
+                        $('div#loadingDialog').modal('toggle');
+
+                    },
+
+                    success: function (response) {
+
+                        $('#loadingDIV').hide();
+                     
+                 
+
+                        if (response.success == true) {
+                            var datenow = Date();
+                            var formatdate = "";
+                            for (var i = 0; i < 25; i++) {
+                                formatdate += datenow[i];
+                            }
+                            // ايجاد يک سطر به (جدول) فهرست کاربران
+                            var varRow =
+                                '<tr ><td > </td><td>' + $('input#Name').val() +
+                                '</td> <td>' + formatdate +
+                                '</td></tr>';
+                            
+                            //$('table#data').prepend(varRow);
+                            $('tr#firsttr').after(varRow);
+                            $('input#Password').val('');
+                            $('input#Name').val('');
+                            $('input#ConfirmPassword').val('');
+
+                            $('div#createDialog').modal('toggle');
+                        }
+                        $('#btnCreate').fadeIn(1000);
+                    },
+
+                    complete: function (response) {
+
+
+
+                    },
+
+                });
+
+            });
+
+        });
+        function onAjaxDeleteFailed(response, status) {
+            alert(response);
+        }
+        function onAjaxDeleteSuccess(response, status) {
+            if (response.Succeed) {
+                $("#deleteResult").html(response.Message);
+                $("tr#" + response.Id).fadeOut().remove();
+            }
+            else {
+                $("#deleteResult").html(response.Message);
+                $("tr#" + response.Id).fadeToggle().remove();
+            }
+        }
+    </script>
+}

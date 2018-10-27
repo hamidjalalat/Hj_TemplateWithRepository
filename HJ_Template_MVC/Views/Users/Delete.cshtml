@@ -1,0 +1,51 @@
+﻿@model Models.User
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>@Resources.General.Delete</h2>
+
+<div>
+    <h4>@Resources.General.InfoUsers</h4>
+    <hr />
+    <dl class="dl-horizontal">
+       
+
+        
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Password)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Password)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DataCreate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DataCreate)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value=@Resources.General.Delete class="btn btn-primary" /> |
+            @Html.ActionLink(Resources.General.BackToList, MVC.Users.Index())
+        </div>
+    }
+</div>
